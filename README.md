@@ -4,3 +4,5 @@
 2.native层抛出java Exceoption
 
 3.一些错误案例的展示
+
+4.项目十分简单，适合新手学习
