@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".MainActivity">
+
+
+    <TextView
+        android:text="right samples:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <Button
+        android:onClick="nativeThrowException"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="native throw an exception"/>
+    <Button
+        android:onClick="callJavaFromC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="c call java"/>
+    <Button
+        android:onClick="nativeShowToast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="native show toast"/>
+
+    <TextView
+        android:text="wrong samples:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <Button
+        android:onClick="wrongSampleUsingJNIEnv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="create a jstring after exception thrown"/>
+    <Button
+        android:onClick="callMethodNotExists"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="call native method not exists"/>
+
+</LinearLayout>
