@@ -4,11 +4,11 @@
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,"wsy" ,__VA_ARGS__)
 
 
-extern "C" JNIEXPORT jstring
-JNICALL
-Java_com_wsy_jnidemo_MainActivity_testExceptionNotCrash(
-        JNIEnv *env,
-        jobject /* this */, jint i) {
+    extern "C" JNIEXPORT jstring
+    JNICALL
+    Java_com_wsy_jnidemo_MainActivity_testExceptionNotCrash(
+            JNIEnv *env,
+            jobject /* this */, jint i) {
     jstring hello = env->NewStringUTF("hello world");
     if (i > 100) {
         jclass exceptionCls = env->FindClass("com/wsy/jnidemo/CustomException");
@@ -31,6 +31,29 @@ Java_com_wsy_jnidemo_MainActivity_testExceptionCrash(
     return env->NewStringUTF("hello world, after exception");
 }
 
+extern "C" JNIEXPORT jstring
+JNICALL
+Java_com_wsy_jnidemo_MainActivity_getJobjectClassNotStatic(
+        JNIEnv *env,
+        jobject  obj) {
+    jclass cls = env->GetObjectClass(obj);
+    jmethodID toStringMethod = env->GetMethodID(cls,"toString","()Ljava/lang/String;");
+    jstring def = static_cast<jstring>(env->CallObjectMethod(cls, toStringMethod));
+    env->DeleteLocalRef(cls);
+    return def;
+}
+extern "C" JNIEXPORT jstring
+JNICALL
+Java_com_wsy_jnidemo_MainActivity_getJobjectClassStatic(
+        JNIEnv *env,
+        jobject  obj) {
+    jclass cls = env->GetObjectClass(obj);
+    jmethodID toStringMethod = env->GetMethodID(cls,"toString","()Ljava/lang/String;");
+    jstring def = static_cast<jstring>(env->CallObjectMethod(cls, toStringMethod));
+    env->DeleteLocalRef(cls);
+    return def;
+}
+
 extern "C" JNIEXPORT void
 JNICALL
 Java_com_wsy_jnidemo_MainActivity_testCallJava(
@@ -40,6 +63,7 @@ Java_com_wsy_jnidemo_MainActivity_testCallJava(
     jfieldID codeId = env->GetFieldID(cls, "code", "I");
     jfieldID msgId = env->GetFieldID(cls, "msg", "Ljava/lang/String;");
     jint code = env->GetIntField(activity, codeId);
+
     //获取MainActivity中定义的code和msg，并以log打印
     jstring msg = (jstring) env->GetObjectField(activity, msgId);
     LOGI("code = %d,msg = %s", code, env->GetStringUTFChars(msg, JNI_FALSE));
@@ -47,21 +71,23 @@ Java_com_wsy_jnidemo_MainActivity_testCallJava(
     jstring nativeMsg = env->NewStringUTF("java method cCallJava called");
     //调用java中的cCallJava方法
     env->CallVoidMethod(activity, callJavaMethodId, nativeMsg);
+
     env->DeleteLocalRef(msg);
     env->DeleteLocalRef(nativeMsg);
     env->DeleteLocalRef(cls);
 }
 
-extern "C" JNIEXPORT void
-JNICALL
-Java_com_wsy_jnidemo_MainActivity_nativeShowToast(
-        JNIEnv *env,
-        jobject /* this */, jobject activity) {
+    extern "C" JNIEXPORT void
+    JNICALL
+    Java_com_wsy_jnidemo_MainActivity_nativeShowToast(
+            JNIEnv *env,
+            jobject /* this */, jobject activity) {
     //找到Toast类
     jclass cls = env->FindClass("android/widget/Toast");
     //找到静态方法makeText
     jmethodID makeTextMethodId = env->GetStaticMethodID(cls, "makeText",
                                                         "(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;");
+
     //找到非静态方法show
     jmethodID showMethodId = env->GetMethodID(cls, "show", "()V");
     //创建显示的内容
@@ -74,7 +100,6 @@ Java_com_wsy_jnidemo_MainActivity_nativeShowToast(
                                                    lengthShortId);
     //调用toast方法的show方法展示内容
     env->CallVoidMethod(toastObj, showMethodId, showLength);
-
     env->DeleteLocalRef(content);
     env->DeleteLocalRef(cls);
 }
