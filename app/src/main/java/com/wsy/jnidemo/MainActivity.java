@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
     //查看第二个参数的类型（Java方法声明为静态）
     public static native String getJobjectClassStatic();
 
-
     //不存在的native方法
     public native void methodNotExists();
 
