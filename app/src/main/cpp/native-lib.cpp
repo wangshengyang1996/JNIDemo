@@ -105,3 +105,24 @@ Java_com_wsy_jnidemo_MainActivity_nativeShowToast(
     env->DeleteLocalRef(content);
     env->DeleteLocalRef(cls);
 }
+
+jstring dynamicRegister(JNIEnv *jniEnv, jobject obj) {
+    return jniEnv->NewStringUTF("dynamicRegister");
+}
+
+int JNI_OnLoad(JavaVM *javaVM, void *reserved) {
+    JNIEnv *jniEnv;
+    if (JNI_OK == javaVM->GetEnv((void **) (&jniEnv), JNI_VERSION_1_4)) {
+        // 动态注册的Java函数所在的类
+        jclass registerClass = jniEnv->FindClass("com/wsy/jnidemo/MainActivity");
+        JNINativeMethod jniNativeMethods[] = {
+                //3个参数分别为 Java函数的名称，Java函数的签名（不带函数名），本地函数指针
+                {"dynamicRegister", "()Ljava/lang/String;", (void *) (dynamicRegister)}
+        };
+        if (jniEnv->RegisterNatives(registerClass, jniNativeMethods,
+                                    sizeof(jniNativeMethods) / sizeof((jniNativeMethods)[0])) < 0) {
+            return JNI_ERR;
+        }
+    }
+    return JNI_VERSION_1_4;
+}

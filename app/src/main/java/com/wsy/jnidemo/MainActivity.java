@@ -1,7 +1,6 @@
 package com.wsy.jnidemo;
 
 import android.app.Activity;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
 
     //不存在的native方法
     public native void methodNotExists();
+
+    //动态注册的函数
+    public native String dynamicRegister();
 
     public void nativeThrowException(View view) {
         int count = new Random().nextBoolean() ? 1000 : 100;
@@ -123,5 +125,9 @@ public class MainActivity extends AppCompatActivity {
      */
     public void showClassName(View view) {
         Toast.makeText(this, "static:\n" + getJobjectClassStatic() + "\n\nnot static:\n" + getJobjectClassNotStatic(), Toast.LENGTH_SHORT).show();
+    }
+
+    public void callDynamicRegisteredMethod(View view) {
+        Toast.makeText(this, dynamicRegister(), Toast.LENGTH_SHORT).show();
     }
 }
