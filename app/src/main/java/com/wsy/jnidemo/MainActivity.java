@@ -26,10 +26,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        testJNIUtilDemo();
         File dir = new File(getApplicationInfo().nativeLibraryDir);
         Log.i(TAG, "onCreate: " + dir.getParentFile().listFiles().length);
         for (File file : dir.listFiles()) {
             Log.i(TAG, "onCreate: " + file.getAbsolutePath());
+        }
+    }
+
+    private void testJNIUtilDemo() {
+        try {
+            Log.i(TAG, "testJNIUtilDemo: \n" + JNIUtil.generateClass2SignatureCode(getClass()));
+            Log.i(TAG, "testJNIUtilDemo: \n" + JNIUtil.generateField2SignatureCode(getClass().getDeclaredField("code")));
+            Log.i(TAG, "testJNIUtilDemo: \n" + JNIUtil.generateMethod2SignatureCode(getClass().getDeclaredMethod("nativeThrowException",View.class)));
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
 
@@ -69,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
 
     //C层将调用此方法，勿删
     public void cCallJava(String str) {
-
         Log.i(TAG, "cCallJava: " + str);
         Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
     }
