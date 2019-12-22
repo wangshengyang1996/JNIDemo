@@ -15,7 +15,7 @@ Java_com_wsy_jnidemo_MainActivity_testExceptionNotCrash(
         env->ThrowNew(exceptionCls, "i must <= 100");
         env->DeleteLocalRef(exceptionCls);
     }
-    //已出现异常，env已不可使用，但事先已创建好了String对象，因此能够return
+    //已出现异常，env已不可用于创建对象，但由于事先已创建好了String对象，因此能够return
     return hello;
 }
 
