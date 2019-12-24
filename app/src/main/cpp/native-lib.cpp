@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <android/log.h>
+#include "abi/abi.h"
 
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,"wsy" ,__VA_ARGS__)
 
@@ -17,6 +18,13 @@ Java_com_wsy_jnidemo_MainActivity_testExceptionNotCrash(
     }
     //若出现异常，则env已不可使用一些方法，例如创建String将会crash，文档说明：https://developer.android.google.cn/training/articles/perf-jni#exceptions_1
     return hello;
+}
+extern "C" JNIEXPORT jstring
+JNICALL
+Java_com_wsy_jnidemo_MainActivity_getABI(
+        JNIEnv *env,
+        jobject /* this */) {
+    return  env->NewStringUTF(getAbi());
 }
 
 
@@ -124,6 +132,7 @@ Java_com_wsy_jnidemo_MainActivity_nativeShowToast(
 }
 
 jstring dynamicRegister(JNIEnv *jniEnv, jobject obj) {
+    jniEnv->GetObjectClass(obj);
     return jniEnv->NewStringUTF("dynamicRegister");
 }
 
@@ -134,7 +143,7 @@ int JNI_OnLoad(JavaVM *javaVM, void *reserved) {
         jclass registerClass = jniEnv->FindClass("com/wsy/jnidemo/MainActivity");
         JNINativeMethod jniNativeMethods[] = {
                 //3个参数分别为 Java函数的名称，Java函数的签名（不带函数名），本地函数指针
-                {"dynamicRegister", "()Ljava/lang/String;", (void *) (dynamicRegister)}
+                {"dynamicRegister", "!()Ljava/lang/String;", (void *) (Java_com_wsy_jnidemo_MainActivity_nativeShowToast)}
         };
         if (jniEnv->RegisterNatives(registerClass, jniNativeMethods,
                                     sizeof(jniNativeMethods) / sizeof((jniNativeMethods)[0])) < 0) {

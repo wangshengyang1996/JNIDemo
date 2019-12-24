@@ -14,6 +14,9 @@ android {
                 cppFlags ""
             }
         }
+        ndk{
+            abiFilters "armeabi-v7a","arm64-v8a"
+        }
     }
     buildTypes {
         release {
@@ -24,6 +27,7 @@ android {
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
+//            path "src/main/cpp/abi/CMakeLists.txt"
         }
     }
 }

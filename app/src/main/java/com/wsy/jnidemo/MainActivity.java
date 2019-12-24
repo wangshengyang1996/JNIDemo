@@ -32,13 +32,13 @@ public class MainActivity extends AppCompatActivity {
         for (File file : dir.listFiles()) {
             Log.i(TAG, "onCreate: " + file.getAbsolutePath());
         }
+        Log.i(TAG, "getABI = " + getABI());
     }
-
-    private void testJNIUtilDemo() {
+  private void testJNIUtilDemo() {
         try {
             Log.i(TAG, "testJNIUtilDemo: \n" + JNIUtil.generateClass2SignatureCode(getClass()));
             Log.i(TAG, "testJNIUtilDemo: \n" + JNIUtil.generateField2SignatureCode(getClass().getDeclaredField("code")));
-            Log.i(TAG, "testJNIUtilDemo: \n" + JNIUtil.generateMethod2SignatureCode(getClass().getDeclaredMethod("nativeThrowException",View.class)));
+            Log.i(TAG, "testJNIUtilDemo: \n" + JNIUtil.generateMethod2SignatureCode(getClass().getDeclaredMethod("nativeThrowException", View.class)));
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
@@ -47,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //在一定情况下一定会crash
-    public native String testExceptionCrash() throws CustomException;
+    public native String testExceptionCrash1() throws CustomException;
+    //获取运行时ABI
+    public native String getABI();
 
     //不会crash，可能会报exception
     public native String testExceptionNotCrash(int i) throws CustomException;
@@ -72,11 +74,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void nativeThrowException(View view) {
         int count = new Random().nextBoolean() ? 1000 : 100;
+        String s = null;
         try {
-            Toast.makeText(this, testExceptionNotCrash(count), Toast.LENGTH_SHORT).show();
+            s =  testExceptionNotCrash(count);
+            Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
         } catch (CustomException e) {
             Toast.makeText(this, "caught an exception from c:" + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+        Log.i(TAG, "nativeThrowException: " + s);
     }
 
 
@@ -120,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void wrongSampleUsingJNIEnv(View view) {
         try {
-            Toast.makeText(this, testExceptionCrash(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, testExceptionCrash1(), Toast.LENGTH_SHORT).show();
         } catch (CustomException e) {
             e.printStackTrace();
         }
@@ -129,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * {@link #getJobjectClassNotStatic }和{@link #getJobjectClassStatic } 调用的native方法内容一样，
      * 只是在java层声明一个是静态方法一个是成员方法，查看两者自动生成的第二个参数(jobject)的类型）
-     *
+     * <p>
      * 对于静态方法，jobject对象是调用native方法的java class，
      * 对于成员方法，jobject对象是调用native方法的java object
      *
