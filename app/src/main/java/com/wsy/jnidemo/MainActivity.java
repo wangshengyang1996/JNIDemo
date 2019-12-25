@@ -33,8 +33,11 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "onCreate: " + file.getAbsolutePath());
         }
         Log.i(TAG, "getABI = " + getABI());
+
+        Log.i(TAG, "getABIByDlopen = " + getABIByDlopen(getApplicationInfo().nativeLibraryDir + File.separator + "libabi.so"));
     }
-  private void testJNIUtilDemo() {
+
+    private void testJNIUtilDemo() {
         try {
             Log.i(TAG, "testJNIUtilDemo: \n" + JNIUtil.generateClass2SignatureCode(getClass()));
             Log.i(TAG, "testJNIUtilDemo: \n" + JNIUtil.generateField2SignatureCode(getClass().getDeclaredField("code")));
@@ -48,8 +51,12 @@ public class MainActivity extends AppCompatActivity {
 
     //在一定情况下一定会crash
     public native String testExceptionCrash1() throws CustomException;
+
     //获取运行时ABI
     public native String getABI();
+
+    public native String getABIByDlopen(String libPath);
+//    public native String getABI(String libPath);
 
     //不会crash，可能会报exception
     public native String testExceptionNotCrash(int i) throws CustomException;
@@ -76,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         int count = new Random().nextBoolean() ? 1000 : 100;
         String s = null;
         try {
-            s =  testExceptionNotCrash(count);
+            s = testExceptionNotCrash(count);
             Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
         } catch (CustomException e) {
             Toast.makeText(this, "caught an exception from c:" + e.getMessage(), Toast.LENGTH_SHORT).show();

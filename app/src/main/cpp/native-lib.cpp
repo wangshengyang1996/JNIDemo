@@ -24,9 +24,37 @@ JNICALL
 Java_com_wsy_jnidemo_MainActivity_getABI(
         JNIEnv *env,
         jobject /* this */) {
-    return  env->NewStringUTF(getAbi());
+    return env->NewStringUTF(getAbi());
 }
 
+typedef const char * (*getAbiFunc)();
+
+#include "dlfcn.h"
+
+extern "C" JNIEXPORT jstring
+JNICALL
+Java_com_wsy_jnidemo_MainActivity_getABIByDlopen(
+        JNIEnv *env,
+        jobject /* this */, jstring libPath) {
+    const char *cLibPath = env->GetStringUTFChars(libPath, JNI_FALSE);
+    void *handle = dlopen(cLibPath, RTLD_LAZY);
+    env->ReleaseStringUTFChars(libPath, cLibPath);
+    const char *abi = "unknown";
+    if (handle == NULL) {
+        LOGI("lib not found!");
+    } else {
+        LOGI("lib found!");
+        getAbiFunc getAbiFunction = (getAbiFunc) (dlsym(handle, "getAbi"));
+        if (getAbiFunction == NULL) {
+            LOGI("function not found!");
+        } else {
+            abi = getAbiFunction();
+            LOGI("getAbi by dlopen success, abi is : %s", abi);
+        }
+        dlclose(handle);
+    }
+    return env->NewStringUTF(abi);
+}
 
 
 extern "C" JNIEXPORT jstring

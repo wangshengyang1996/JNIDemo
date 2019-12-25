@@ -9,5 +9,7 @@ const char *getAbi() {
     return "x86";
 #elif __x86_64__
     return "x86_64";
+#else
+    return "unknown";
 #endif
 }
