@@ -7,6 +7,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.wsy.jnidemo.test.ReferenceTest;
+import com.wsy.jnidemo.test.ReverseTest;
+
 import java.io.File;
 import java.util.Random;
 
@@ -35,6 +38,40 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "getABI = " + getABI());
 
         Log.i(TAG, "getABIByDlopen = " + getABIByDlopen(getApplicationInfo().nativeLibraryDir + File.separator + "libabi.so"));
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                doReverseTest();
+                doReferenceTest();
+            }
+        }).start();
+
+    }
+
+    private void doReverseTest() {
+        ReverseTest.reverseData();
+        ReverseTest.reverseJudge(10000);
+    }
+    private void doReferenceTest() {
+        ReferenceTest.nativeJudgeSameObject();
+        // not crash
+//        for (int i = 0; i < 10000; i++) {
+//            ReferenceTest.createLocalRef(10000);
+//        }
+//        // crash when count is bigger than reference table's max capacity
+////        ReferenceTest.createLocalRef(100000000);
+//
+//        Log.i(TAG, "doReferenceTest: createLocalRef done");
+//        for (int i = 0; i < 5000; i++) {
+//            ReferenceTest.createWeakGlobalRef();
+//        }
+//        Log.i(TAG, "doReferenceTest: createWeakGlobalRef done");
+//        for (long i = 0; i < 2500000000L; i++) {
+//            ReferenceTest.createWeakGlobalRef();
+//        }
+//        Log.i(TAG, "doReferenceTest: createGlobalRef done");
     }
 
     private void testJNIUtilDemo() {

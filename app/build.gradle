@@ -28,6 +28,7 @@ android {
         cmake {
             path "CMakeLists.txt"
 //            path "src/main/cpp/abi/CMakeLists.txt"
+//            path "src/main/cpp/reverse/CMakeLists.txt"
         }
     }
 }

@@ -4,12 +4,12 @@
 
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,"wsy" ,__VA_ARGS__)
 
-
 extern "C" JNIEXPORT jstring
 JNICALL
 Java_com_wsy_jnidemo_MainActivity_testExceptionNotCrash(
         JNIEnv *env,
         jobject /* this */, jint i) {
+
     jstring hello = env->NewStringUTF("hello world");
     if (i > 100) {
         jclass exceptionCls = env->FindClass("com/wsy/jnidemo/CustomException");
@@ -51,7 +51,7 @@ Java_com_wsy_jnidemo_MainActivity_getABIByDlopen(
             abi = getAbiFunction();
             LOGI("getAbi by dlopen success, abi is : %s", abi);
         }
-        dlclose(handle);
+        LOGI("dlclose(handle) is : %d", dlclose(handle));
     }
     return env->NewStringUTF(abi);
 }
@@ -91,7 +91,6 @@ Java_com_wsy_jnidemo_MainActivity_getJobjectClassStatic(
     env->DeleteLocalRef(cls);
     return def;
 }
-
 extern "C" JNIEXPORT void
 JNICALL
 Java_com_wsy_jnidemo_MainActivity_testCallJava(
@@ -160,7 +159,6 @@ Java_com_wsy_jnidemo_MainActivity_nativeShowToast(
 }
 
 jstring dynamicRegister(JNIEnv *jniEnv, jobject obj) {
-    jniEnv->GetObjectClass(obj);
     return jniEnv->NewStringUTF("dynamicRegister");
 }
 
@@ -171,7 +169,7 @@ int JNI_OnLoad(JavaVM *javaVM, void *reserved) {
         jclass registerClass = jniEnv->FindClass("com/wsy/jnidemo/MainActivity");
         JNINativeMethod jniNativeMethods[] = {
                 //3个参数分别为 Java函数的名称，Java函数的签名（不带函数名），本地函数指针
-                {"dynamicRegister", "!()Ljava/lang/String;", (void *) (Java_com_wsy_jnidemo_MainActivity_nativeShowToast)}
+                {"dynamicRegister", "!()Ljava/lang/String;", (void *) (dynamicRegister)}
         };
         if (jniEnv->RegisterNatives(registerClass, jniNativeMethods,
                                     sizeof(jniNativeMethods) / sizeof((jniNativeMethods)[0])) < 0) {
