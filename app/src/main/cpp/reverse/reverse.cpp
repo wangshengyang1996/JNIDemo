@@ -4,7 +4,6 @@
 
 #include <jni.h>
 #include <android/log.h>
-#include "../abi/abi.h"
 
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,"reservetest" ,__VA_ARGS__)
 
